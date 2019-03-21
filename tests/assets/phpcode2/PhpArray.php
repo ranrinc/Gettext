@@ -53,6 +53,18 @@ Report-Msgid-Bugs-To:
       array (
         0 => '',
       ),
+      'i18n tagged %s' => 
+      array (
+        0 => '',
+      ),
+      'foo' => 
+      array (
+        0 => '',
+      ),
+      'bar' => 
+      array (
+        0 => '',
+      ),
     ),
     'my-context' => 
     array (

@@ -21,7 +21,7 @@ __('No comments');
 /* All comments */
 p__(CONTEXT, 'All comments');
 
-/* i18n Tagged comment */
+/* Invalid i18n Tagged comment */
 
 __('i18n Tagged comment');
 
@@ -31,3 +31,14 @@ gettext(
 );
 
 dn__(null, 'One comment', 'Many comments', 2);
+
+/* i18n Tagged comment on the line before */
+sprintf( __('i18n tagged %s'), '$var');
+
+/*
+ * Translators: This is a
+ * multi-line comment.
+ */
+__( 'foo' );
+
+/* translators: this should get extracted. */ $foo = __( 'bar' );

@@ -2,6 +2,7 @@
 
 namespace Gettext\Tests;
 
+use Gettext\Languages\Language;
 use Gettext\Translations;
 use Gettext\Translation;
 use Gettext\Translator;
@@ -63,11 +64,6 @@ class TranslatorTest extends AbstractTest
         $this->assertEquals('5-21 plików', $t->ngettext('one file', 'multiple files', 5));
         $this->assertEquals('5-21 plików', $t->ngettext('one file', 'multiple files', 6));
 
-        // Test that when less then the nplural translations are available it still works.
-        $this->assertEquals('1', $t->ngettext('one', 'more', 1));
-        $this->assertEquals('*', $t->ngettext('one', 'more', 2));
-        $this->assertEquals('*', $t->ngettext('one', 'more', 3));
-
         // Test that non-plural translations the fallback still works.
         $this->assertEquals('more', $t->ngettext('single', 'more', 3));
 
@@ -97,21 +93,24 @@ class TranslatorTest extends AbstractTest
         $this->assertEquals('beaucoup de commentaires', n__('One comment', '%s comments', 3, ['%s' => 'beaucoup de']));
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
     public function testPluralInjection()
     {
         $translations = new Translations();
-        $translations->setPluralForms(2,'fuu_call()');
-        $translations[] =
-            (new Translation(null, 'One comment', '%s comments'))
-            ->setTranslation('Un commentaire')
-            ->setPluralTranslations(['%s commentaires']);
-        $t = new Translator();
-        $t->loadTranslations($translations);
+        $translations->setPluralForms(2, 'fuu_call()');
+    }
 
-        $t->register();
+    public function testPluralFromValidation()
+    {
+        $translations = new Translations();
+        $languages = Language::getAll();
 
-        $this->setExpectedException('InvalidArgumentException');
-        n__('One comment', '%s comments', 3);
+        foreach ($languages as $language) {
+            $result = $translations->setPluralForms(2, $language->formula);
+            $this->assertInstanceOf('Gettext\Translations', $result);
+        }
     }
 
     public function testContextFunction()
@@ -263,8 +262,6 @@ class TranslatorTest extends AbstractTest
         $mo = (new Translator())->loadTranslations(static::get('po/Mo'));
         $array = (new Translator())->loadTranslations(static::get('po/PhpArray'));
 
-        $this->assertNotEmpty($po->gettext(''));
-        $this->assertEquals($po->gettext(''), $mo->gettext(''));
-        $this->assertEquals($po->gettext(''), $array->gettext(''));
+        $this->assertEmpty($po->gettext(''));
     }
 }

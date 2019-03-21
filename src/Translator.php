@@ -20,7 +20,7 @@ class Translator extends BaseTranslator implements TranslatorInterface
     public function loadTranslations($translations)
     {
         if (is_object($translations) && $translations instanceof Translations) {
-            $translations = PhpArray::generate($translations);
+            $translations = PhpArray::generate($translations, ['includeHeaders' => false]);
         } elseif (is_string($translations) && is_file($translations)) {
             $translations = include $translations;
         } elseif (!is_array($translations)) {
@@ -238,9 +238,6 @@ class Translator extends BaseTranslator implements TranslatorInterface
      */
     private static function fixTerseIfs($code, $inner = false)
     {
-        if (preg_match('~[^\s0-9n<>|&=\-+%?:();\$]~', str_replace('return ', '', $code))) {
-            throw new \InvalidArgumentException('Invalid Plural form: ' . $code);
-        }
         /*
          * (?P<expression>[^?]+)   Capture everything up to ? as 'expression'
          * \?                      ?
